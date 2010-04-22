@@ -1,13 +1,22 @@
 #!/usr/bin/make -f
 
-%:
-	dh $@
+build: build-stamp
+build-stamp:
+	dh build
+	touch build-stamp
 
-override_dh_auto_install:
+clean:
+	dh clean
+
+install: build install-stamp
+install-stamp:
 	dh_auto_install -- lib=lib
+	touch install-stamp
 
-override_dh_makeshlibs:
-	dh_makeshlibs -V 'libcap2 (>= 2.10)'
+binary-arch: install
+	dh binary-arch
 
-get-orig-source:
-	-uscan --upstream-version 0
+binary-indep: install
+	dh binary-indep
+
+binary: binary-arch binary-indep
