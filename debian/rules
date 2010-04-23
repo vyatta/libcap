@@ -10,7 +10,7 @@ clean:
 
 install: build install-stamp
 install-stamp:
-	dh_auto_install -- lib=lib
+	dh install
 	touch install-stamp
 
 binary-arch: install
