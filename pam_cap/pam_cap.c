@@ -12,6 +12,7 @@
 #include <errno.h>
 #include <stdarg.h>
 #include <stdlib.h>
+#include <grp.h>
 #include <syslog.h>
 
 #include <sys/capability.h>
@@ -31,6 +32,23 @@ struct pam_cap_s {
     const char *conf_filename;
 };
 
+static int is_member_of(const char *user, const char *grnam)
+{
+    struct group gbuf, *gr = NULL;
+    char **m;
+    char buf[1024];
+
+    if (getgrnam_r(grnam, &gbuf, buf, sizeof(buf), &gr) != 0 ||
+	gr == NULL)
+	return 0;
+
+    for (m = gr->gr_mem; *m; ++m)
+	if (strcmp(*m, user) == 0)
+	    return 1;
+    return 0;
+}
+
+
 /* obtain the inheritable capabilities for the current user */
 
 static char *read_capabilities_for_user(const char *user, const char *source)
@@ -46,7 +64,6 @@ static char *read_capabilities_for_user(const char *user, const char *source)
     }
 
     while ((line = fgets(buffer, CAP_FILE_BUFFER_SIZE, cap_file))) {
-	int found_one = 0;
 	const char *cap_text;
 	char *tok = NULL;
 
@@ -65,25 +82,20 @@ static char *read_capabilities_for_user(const char *user, const char *source)
 
 	    if (strcmp("*", line) == 0) {
 		D(("wildcard matched"));
-		found_one = 1;
-		cap_string = strdup(cap_text);
-		break;
-	    }
-
-	    if (strcmp(user, line) == 0) {
+	    } else if (strcmp(user, line) == 0) {
 		D(("exact match for user"));
-		found_one = 1;
-		cap_string = strdup(cap_text);
-		break;
+	    } else if (line[0] == '%' && is_member_of(user, line+1)) {
+		D(("group match for group %s", line+1));
+	    } else {
+	        D(("user is not [%s] - skipping", line));
+		continue;
 	    }
 
-	    D(("user is not [%s] - skipping", line));
+	    cap_string = strdup(cap_text);
+	    break;
 	}
 
-	cap_text = NULL;
-	line = NULL;
-
-	if (found_one) {
+	if (cap_string) {
 	    D(("user [%s] matched - caps are [%s]", user, cap_string));
 	    break;
 	}
