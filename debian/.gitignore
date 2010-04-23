@@ -1,2 +1,8 @@
-tmp/
 *.log
+*.substvars
+*.debhelper
+files
+libcap2/
+libcap2-bin/
+libcap-dev/
+tmp/
