@@ -3,8 +3,7 @@ Section: libs
 Priority: optional
 Maintainer: Vyatta Package Maintainers <maintainers@vyatta.com>
 Standards-Version: 3.8.3
-Build-Depends: debhelper (>= 7.0.50~), indent, libattr1-dev, libpam0g-dev,
- quilt
+Build-Depends: debhelper (>= 5), libattr1-dev, libpam0g-dev
 Homepage: http://sites.google.com/site/fullycapable/
 Vcs-Svn: https://bollin.googlecode.com/svn/libcap2/
 Vcs-Browser: http://bollin.googlecode.com/svn/libcap2/
