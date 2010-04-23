@@ -48,8 +48,9 @@ static char *read_capabilities_for_user(const char *user, const char *source)
     while ((line = fgets(buffer, CAP_FILE_BUFFER_SIZE, cap_file))) {
 	int found_one = 0;
 	const char *cap_text;
+	char *tok = NULL;
 
-	cap_text = strtok(line, CAP_FILE_DELIMITERS);
+	cap_text = strtok_r(line, CAP_FILE_DELIMITERS, &tok);
 
 	if (cap_text == NULL) {
 	    D(("empty line"));
@@ -60,7 +61,7 @@ static char *read_capabilities_for_user(const char *user, const char *source)
 	    continue;
 	}
 
-	while ((line = strtok(NULL, CAP_FILE_DELIMITERS))) {
+	while ((line = strtok_r(NULL, CAP_FILE_DELIMITERS, &tok))) {
 
 	    if (strcmp("*", line) == 0) {
 		D(("wildcard matched"));
