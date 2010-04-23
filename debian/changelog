@@ -1,4 +1,15 @@
-libcap2 (1:2.19-1) unstable; urgency=low
+libcap2 (2.19-2) unstable; urgency=low
+
+  * Make it build with debian lenny
+  * ignore derived files
+  * Use strtok_r to parse line
+  * Ignore more derived files
+  * Add ability to match based on Linux group
+  * Fix build for systems with debian hardening enabled
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Fri, 23 Apr 2010 15:39:55 -0700
+
+libcap2 (2.19-1) unstable; urgency=low
 
   * Initial Vyatta version based on original upstream source
 
