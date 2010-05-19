@@ -1,3 +1,9 @@
+libcap2 (2.19-3) unstable; urgency=low
+
+  * Add configuration of pam_cap via pam-auth-update
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Wed, 19 May 2010 13:51:07 -0700
+
 libcap2 (2.19-2) unstable; urgency=low
 
   * Make it build with debian lenny
