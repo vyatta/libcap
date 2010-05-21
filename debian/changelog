@@ -1,3 +1,10 @@
+libcap2 (2.19-4) unstable; urgency=low
+
+  * Allow runtime debugging
+  * Fix definition of "all"
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Fri, 21 May 2010 12:29:46 -0700
+
 libcap2 (2.19-3) unstable; urgency=low
 
   * Add configuration of pam_cap via pam-auth-update
