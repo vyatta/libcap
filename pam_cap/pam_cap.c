@@ -18,6 +18,7 @@
 #include <sys/capability.h>
 
 #include <security/pam_modules.h>
+#include <security/pam_ext.h>
 #include <security/_pam_macros.h>
 
 #define USER_CAP_FILE           "/etc/security/capability.conf"
@@ -114,7 +115,7 @@ static char *read_capabilities_for_user(const char *user, const char *source)
  * set.
  */
 
-static int set_capabilities(struct pam_cap_s *cs)
+static int set_capabilities(pam_handle_t *pamh, struct pam_cap_s *cs)
 {
     cap_t cap_s;
     ssize_t length = 0;
@@ -125,8 +126,8 @@ static int set_capabilities(struct pam_cap_s *cs)
 
     cap_s = cap_get_proc();
     if (cap_s == NULL) {
-	D(("your kernel is capability challenged - upgrade: %s",
-	   strerror(errno)));
+	pam_syslog(pamh, LOG_ERR, "your kernel is capability challenged - upgrade: %s",
+		   strerror(errno));
 	return 0;
     }
 
@@ -135,13 +136,15 @@ static int set_capabilities(struct pam_cap_s *cs)
 				   cs->conf_filename
 				   ? cs->conf_filename:USER_CAP_FILE );
     if (conf_icaps == NULL) {
-	D(("no capabilities found for user [%s]", cs->user));
+	if (cs->debug)
+	    pam_syslog(pamh, LOG_DEBUG, "no capabilities found for user [%s]", cs->user);
 	goto cleanup_cap_s;
     }
 
     proc_epcaps = cap_to_text(cap_s, &length);
     if (proc_epcaps == NULL) {
-	D(("unable to convert process capabilities to text"));
+	pam_syslog(pamh, LOG_ERR,
+		   "user %s: unable to convert process capabilities to text", cs->user);
 	goto cleanup_icaps;
     }
 
@@ -156,7 +159,7 @@ static int set_capabilities(struct pam_cap_s *cs)
     combined_caps = malloc(1+strlen(CAP_COMBINED_FORMAT)
 			   +strlen(proc_epcaps)+strlen(conf_icaps));
     if (combined_caps == NULL) {
-	D(("unable to combine capabilities into one string - no memory"));
+	pam_syslog(pamh, LOG_ERR, "unable to combine capabilities into one string - no memory");
 	goto cleanup_epcaps;
     }
 
@@ -168,7 +171,9 @@ static int set_capabilities(struct pam_cap_s *cs)
     } else {
 	sprintf(combined_caps, CAP_COMBINED_FORMAT, proc_epcaps, conf_icaps);
     }
-    D(("combined_caps=[%s]", combined_caps));
+
+    if (cs->debug)
+	pam_syslog(pamh, LOG_DEBUG, "user %s combined_caps=[%s]", cs->user, combined_caps);
 
     cap_free(cap_s);
     cap_s = cap_from_text(combined_caps);
@@ -189,7 +194,7 @@ static int set_capabilities(struct pam_cap_s *cs)
 	D(("capabilities were set correctly"));
 	ok = 1;
     } else {
-	D(("failed to set specified capabilities: %s", strerror(errno)));
+	pam_syslog(pamh, LOG_ERR, "failed to set specified capabilities: %s", strerror(errno));
     }
 
 cleanup_epcaps:
@@ -249,20 +254,22 @@ int pam_sm_authenticate(pam_handle_t *pamh, int flags,
     memset(&pcs, 0, sizeof(pcs));
 
     parse_args(argc, argv, &pcs);
-
     retval = pam_get_user(pamh, &pcs.user, NULL);
 
     if (retval == PAM_CONV_AGAIN) {
-	D(("user conversation is not available yet"));
+	pam_syslog(pamh, LOG_ERR, "user conversation is not available yet");
 	memset(&pcs, 0, sizeof(pcs));
 	return PAM_INCOMPLETE;
     }
 
     if (retval != PAM_SUCCESS) {
-	D(("pam_get_user failed: %s", pam_strerror(pamh, retval)));
+	pam_syslog(pamh, LOG_ERR, "pam_get_user failed: %s", pam_strerror(pamh, retval));
 	memset(&pcs, 0, sizeof(pcs));
 	return PAM_AUTH_ERR;
     }
+
+    if (pcs.debug)
+	pam_syslog(pamh, LOG_INFO, "authenticate user: %s", pcs.user);
 
     conf_icaps =
 	read_capabilities_for_user(pcs.user,
@@ -286,7 +293,6 @@ int pam_sm_authenticate(pam_handle_t *pamh, int flags,
 	return PAM_SUCCESS;
 
     } else {
-
 	D(("there are no capabilities restrctions on this user"));
 	return PAM_IGNORE;
 
@@ -310,12 +316,15 @@ int pam_sm_setcred(pam_handle_t *pamh, int flags,
 
     retval = pam_get_item(pamh, PAM_USER, (const void **)&pcs.user);
     if ((retval != PAM_SUCCESS) || (pcs.user == NULL) || !(pcs.user[0])) {
-
-	D(("user's name is not set"));
+	pam_syslog(pamh, LOG_ERR, "user's name is not set");
 	return PAM_AUTH_ERR;
     }
 
-    retval = set_capabilities(&pcs);
+    if (pcs.debug)
+	pam_syslog(pamh, LOG_INFO, "set capability user: %s", pcs.user);
+
+
+    retval = set_capabilities(pamh, &pcs);
 
     memset(&pcs, 0, sizeof(pcs));
 
