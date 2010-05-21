@@ -25,6 +25,7 @@
 #define CAP_FILE_BUFFER_SIZE    4096
 #define CAP_FILE_DELIMITERS     " \t\n"
 #define CAP_COMBINED_FORMAT     "%s all-i %s+i"
+#define CAP_ADD_ALL             "%s all+i"
 #define CAP_DROP_ALL            "%s all-i"
 
 struct pam_cap_s {
@@ -166,8 +167,7 @@ static int set_capabilities(pam_handle_t *pamh, struct pam_cap_s *cs)
     if (!strcmp(conf_icaps, "none")) {
 	sprintf(combined_caps, CAP_DROP_ALL, proc_epcaps);
     } else if (!strcmp(conf_icaps, "all")) {
-	/* no change */
-	sprintf(combined_caps, "%s", proc_epcaps);
+	sprintf(combined_caps, CAP_ADD_ALL, proc_epcaps);
     } else {
 	sprintf(combined_caps, CAP_COMBINED_FORMAT, proc_epcaps, conf_icaps);
     }
