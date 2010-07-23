@@ -1,3 +1,9 @@
+libcap2 (2.19-5) unstable; urgency=low
+
+  * UNRELEASED
+
+ -- An-Cheng Huang <ancheng@vyatta.com>  Thu, 22 Jul 2010 17:21:04 -0700
+
 libcap2 (2.19-4) unstable; urgency=low
 
   * Allow runtime debugging
