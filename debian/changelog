@@ -1,3 +1,9 @@
+libcap2 (2.19-6) unstable; urgency=low
+
+  * UNRELEASED
+
+ -- An-Cheng Huang <ancheng@vyatta.com>  Thu, 02 Sep 2010 18:26:21 -0700
+
 libcap2 (2.19-5) unstable; urgency=low
 
   * UNRELEASED
