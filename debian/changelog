@@ -1,3 +1,9 @@
+libcap2 (2.19-7) unstable; urgency=low
+
+  * new branch
+
+ -- An-Cheng Huang <ancheng@vyatta.com>  Tue, 28 Dec 2010 20:42:42 +0000
+
 libcap2 (2.19-6) unstable; urgency=low
 
   * UNRELEASED
