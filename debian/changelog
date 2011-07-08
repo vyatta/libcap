@@ -1,3 +1,9 @@
+libcap2 (2.19-7+napa1) unstable; urgency=low
+
+  * new branch
+
+ -- Deepti Kulkarni <deepti@vyatta.com>  Thu, 07 Jul 2011 20:44:42 -0700
+
 libcap2 (2.19-7) unstable; urgency=low
 
   * new branch
