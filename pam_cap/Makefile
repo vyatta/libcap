@@ -3,7 +3,7 @@
 topdir=$(shell pwd)/..
 include ../Make.Rules
 
-LDLIBS += -L../libcap -lcap
+LDLIBS += -L../libcap -lcap -lpam
 
 all: pam_cap.so
 	$(MAKE) testcompile
