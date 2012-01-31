@@ -1,3 +1,9 @@
+libcap2 (1:2.19-3+vyatta1) unstable; urgency=low
+
+  * Merge in Debian 6.0.4 version
+
+ -- Stephen Hemminger <shemminger@vyatta.com>  Tue, 31 Jan 2012 10:30:26 -0800
+
 libcap2 (2.19-8) unstable; urgency=low
 
   * new branch
