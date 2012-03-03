@@ -1,3 +1,9 @@
+libcap2 (1:2.19-3+vyatta2+oxnard1) unstable; urgency=low
+
+  * new branch
+
+ -- Deepti Kulkarni <deepti@vyatta.com>  Sat, 03 Mar 2012 02:21:54 -0800
+
 libcap2 (1:2.19-3+vyatta2) unstable; urgency=low
 
   * manually force rebuild
