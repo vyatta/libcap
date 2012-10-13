@@ -1,3 +1,9 @@
+libcap2 (1:2.19-3+vyatta4) unstable; urgency=low
+
+  * new branch
+
+ -- John Southworth <john.southworth@vyatta.com>  Fri, 12 Oct 2012 19:45:08 -0700
+
 libcap2 (1:2.19-3+vyatta3) unstable; urgency=low
 
   * new branch
